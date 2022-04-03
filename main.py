@@ -4,6 +4,7 @@ from coin import Coin
 
 import hikari
 import lightbulb
+import pandas as pd
 
 
 c = Coin()
@@ -41,5 +42,23 @@ async def list_pairs(ctx):
             await ctx.respond(pairs['id'].iloc[i:i+20].to_string())
     # print(pairs.to_string())
     
+
+#####################
+# list recent trades
+@bot.command()
+@lightbulb.option('trade_count', 'Select how many recent trades to look back', type=int) #trade count/number of most recent trades 
+@lightbulb.option('ticker_label','Select the ticker of recent trades you want to see', type=str)
+@lightbulb.command("list_trades", "List all recent trades") # name of command 
+@lightbulb.implements(lightbulb.SlashCommand) # set up slashcommand
+async def list_trades(ctx):
+    trade_data = c.recent_trades(ctx.options.ticker_label, ctx.options.trade_count)
+    trades = pd.DataFrame.from_dict(trade_data)
+    await ctx.respond(trades)
+    # print(type(trade_data[0]))
+    # await ctx.respond(trade_data)
+
+    # print the time, trade_id, size, price, side
+
+
 
 bot.run()
