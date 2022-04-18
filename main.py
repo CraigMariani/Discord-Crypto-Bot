@@ -1,4 +1,5 @@
 # discord bot interacts and shows coinbase pro data 
+import time
 from secret import Secret
 from coin import Coin
 
@@ -8,8 +9,7 @@ import pandas as pd
 
 
 c = Coin()
-
-# instantiate bot app object
+ # instantiate bot app object for slash commands
 bot = lightbulb.BotApp(token=Secret.bot_token, default_enabled_guilds=(Secret.guild_id))
 
 # listing all available trading pairs on coinbase pro
@@ -60,5 +60,27 @@ async def list_trades(ctx):
     # print the time, trade_id, size, price, side
 
 
+#################
+### sending trading signals 
+@bot.listen()
+async def create(event: hikari.GuildMessageCreateEvent):
+    if event.content.strip() == "start_signals":
+        while True:
 
+            tickers = ['BTC-USD', 'ETH-USD', 'SOL-USD', 'MATIC-USD']    
+            signal_data = []
+            for ticker in tickers:
+                signal = c.trade_signal(ticker)
+                signal_data.append({
+                    'ticker' : signal[1], 
+                    'signal' : signal[0]
+                })
+
+            # await event.message.respond('trading data')
+            signal_message = pd.DataFrame(signal_data)
+            await event.message.respond(signal_message)
+
+            time.sleep(3600)
+
+        
 bot.run()

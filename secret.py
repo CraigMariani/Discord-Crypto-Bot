@@ -3,6 +3,6 @@
 class Secret:
 
     bot_token = ''
-    channel_id = None
+    channel_id = None # signal channel
     guild_id = None 
             
