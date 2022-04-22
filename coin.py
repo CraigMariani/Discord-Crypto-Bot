@@ -5,12 +5,31 @@ import pandas as pd
 import numpy as np
 import itertools
 import datetime as dt
+import plotly.graph_objects as go
 
 class Coin:
 
     def __init__(self) -> None:
         client = cbp.PublicClient()
         self.client = client
+    
+    def trade_charts(self, trading_pair):
+        client = self.client
+        data = pd.DataFrame(client.get_product_historic_rates(trading_pair))
+        data = data.iloc[::-1]
+        fig = go.Figure(
+                # title=trading_pair,
+                data=[go.Candlestick(x=data['time'],
+                open=data['open'],
+                high=data['high'],
+                low=data['low'],
+                close=data['close'])])
+        fig.update_layout(title=trading_pair)
+        # fig.show()
+        # fig.to_image(format="png", engine="kaleido")
+        fig.write_image("charts/{}.png".format(trading_pair))
+        
+        # return data
 
     # calculates a crossover strategyfor the current crypto pair
     def trade_signal(self, ticker):

@@ -6,7 +6,7 @@ c = Coin()
 
 ticker = 'BTC-USD'
 # ticker = 'ETH-USD'
-data = c.trade_signal(ticker)
+data = c.trade_charts(ticker)
 print(data)
 # count = 2
 # trades = c.recent_trades('BTC-USD', count)

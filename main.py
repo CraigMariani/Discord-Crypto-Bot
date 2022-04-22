@@ -6,7 +6,7 @@ from coin import Coin
 import hikari
 import lightbulb
 import pandas as pd
-
+import discord
 
 c = Coin()
  # instantiate bot app object for slash commands
@@ -82,5 +82,16 @@ async def create(event: hikari.GuildMessageCreateEvent):
 
             time.sleep(3600)
 
-        
+
+#####
+# sending charts through discord 
+@bot.command()
+@lightbulb.option('trading_pair', 'Select the trading pair that you want to see', type=str) #trade count/number of most recent trades 
+@lightbulb.command("show_chart", "Show most recent price chart for selected crypto pair") # name of command 
+@lightbulb.implements(lightbulb.SlashCommand) # set up slashcommand
+async def show_chart(ctx):
+    c.trade_charts(ctx.options.trading_pair)
+    with open("charts/{}.png".format(ctx.options.trading_pair), "rb") as fh:
+        f = hikari.File("charts/{}.png".format(ctx.options.trading_pair))
+    await ctx.respond(f)
 bot.run()
